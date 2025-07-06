@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+
+  members  Member[]
+  wishlist WishlistItem[]
+}
+
+model Exchange {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  members     Member[]
+  assignments Assignment[]
+}
+
+model Member {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  exchange   Exchange @relation(fields: [exchangeId], references: [id])
+  exchangeId String
+
+  createdAt DateTime @default(now())
+
+  assignedTo   Assignment? @relation("AssignedTo")
+  assignedFrom Assignment? @relation("AssignedFrom")
+
+  @@unique([userId, exchangeId])
+}
+
+model Assignment {
+  id         String   @id @default(uuid())
+  exchange   Exchange @relation(fields: [exchangeId], references: [id])
+  exchangeId String
+
+  giver   Member @relation("AssignedFrom", fields: [giverId], references: [id], onDelete: Cascade)
+  giverId String @unique
+
+  receiver   Member @relation("AssignedTo", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiverId String @unique
+
+  selectedWishlistItemId String?
+  selectedWishlistItem   WishlistItem? @relation(fields: [selectedWishlistItemId], references: [id])
+
+  customGiftTitle String?
+  customGiftUrl   String?
+  giftGivenAt     DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+model WishlistItem {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  title       String
+  description String?
+  url         String?
+
+  createdAt  DateTime     @default(now())
+  Assignment Assignment[]
+}
