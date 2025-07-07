@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Secret Santa App :santa-claus:
+
+A simple secret santa gift exchange application, using Next.js 15, Postgres w Prisma as the ORM.
 
 ## Getting Started
 
@@ -12,6 +14,103 @@ It is also recommended that you put the following on your `$PATH` variable for y
 export PATH="node_modules/.bin:$PATH"
 ```
 This allows your shell to pick up any executable binaries in the local `node_modules` folder.
+
+### Environment Variables
+
+Create a `.env` file with:
+```shell
+DATABASE_URL="postgresql://postgres:prisma@localhost:5432/secretsanta"
+```
+
+For testing, create a `.env.test` file with:
+```shell
+DATABASE_URL="postgresql://postgres:prisma@localhost:5432/secretsanta_test"
+```
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-org/secret-santa-app.git
+cd secret-santa-app
+```
+
+### 2. Install dependencies
+
+Make sure you have pnpm installed:
+
+```shell
+corepack enable
+pnpm install
+```
+
+### 3. Setting up the database
+
+Ensure Docker is running. Then start the PostgreSQL service:
+```shell
+docker compose up -d
+```
+
+### 4. Create the database schema
+
+```shell
+pnpm prisma migrate dev
+```
+This creates the database schema and generates the Prisma client.
+
+### 5. Seed the database (optional)
+
+```shell
+pnpm prisma db seed
+```
+
+## Run the development server
+
+```shell
+pnpm dev
+```
+App should be running at http://localhost:3000
+
+## Testing
+
+### Unit Tests (Vitest)
+
+```shell
+pnpm test:unit
+```
+
+### End-to-End Tests (Playwright)
+
+```shell
+pnpm test:e2e
+```
+
+This will:
+- Drop and recreate a test database (secretsanta_test
+- Run schema migrations
+- Launch your app locally on port 3000
+- Run Playwright against it
+
+## Troubleshooting
+
+### Prisma connection errors
+
+If you see:
+```shell
+PrismaClientInitializationError: Database `secretsanta` does not exist
+```
+
+Make sure:
+- Docker is running: `docker ps`
+- The container is named `secret-santa-db`
+- You ran the migration: `pnpm prisma migrate dev`
+
+### Docker networking errors
+- Restart Docker and try again
+- Use `docker compose down -v && docker compose up -d` to reset the DB (`-v` removes the volume)
+
+### Playwright global setup errors
+- Ensure `.env.test` is valid and points to `secretsanta_test`
+- Clear `.next/` and try rebuilding: `rm -rf .next && pnpm build`
 
 # Database Structure and Design
 
