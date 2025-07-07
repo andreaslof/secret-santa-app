@@ -12,12 +12,9 @@ export async function GET(
       exchangeId: id,
       AND: [
         {
-          OR: [
-            { giverId: memberId },
-            { receiverId: memberId },
-          ]
-        }
-      ]
+          OR: [{ giverId: memberId }, { receiverId: memberId }],
+        },
+      ],
     },
     include: {
       receiver: true,

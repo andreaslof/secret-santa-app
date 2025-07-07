@@ -73,11 +73,12 @@ test.describe('Exchanges API', () => {
 
       // Get assignments for exchange
       const assignmentRes = await request.get(`/api/exchanges/${exchangeId}/assignments`)
-      console.log('assignment response', { assignmentRes })
       expect(assignmentRes.ok()).toBeTruthy()
     })
 
-    test('should be able to fetch an individual exchange member assigned receiver', async ({ request }) => {
+    test('should be able to fetch an individual exchange member assigned receiver', async ({
+      request,
+    }) => {
       const { exchange } = testData
       const { id: exchangeId } = exchange
 
@@ -89,7 +90,9 @@ test.describe('Exchanges API', () => {
       const { id: memberId } = member
 
       // Get member assigned receiver
-      const assignmentRes = await request.get(`/api/exchanges/${exchangeId}/assignments/${memberId}`)
+      const assignmentRes = await request.get(
+        `/api/exchanges/${exchangeId}/assignments/${memberId}`,
+      )
       expect(assignmentRes.ok()).toBeTruthy()
       const result: AssignmentReceiver = await assignmentRes.json()
       expect(result).toHaveProperty('exchangeId')

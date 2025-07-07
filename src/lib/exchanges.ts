@@ -1,5 +1,6 @@
 import { Exchange, Prisma } from '@/app/generated/prisma'
 import { getBaseUrl } from './config'
+import { handleResponse } from './api-helpers'
 
 type AssignmentWithUsers = Prisma.AssignmentGetPayload<{
   include: { giver: true; receiver: true }
@@ -22,7 +23,7 @@ const BASE_URL = `${getBaseUrl()}/api/exchanges`
 
 export async function getAllExchanges(): Promise<Exchange[]> {
   const res = await fetch(BASE_URL)
-  return res.json() as Promise<Exchange[]>
+  return handleResponse<Exchange[]>(res)
 }
 
 export async function createExchange(data: Partial<Exchange>): Promise<Exchange> {
@@ -31,12 +32,12 @@ export async function createExchange(data: Partial<Exchange>): Promise<Exchange>
     body: JSON.stringify(data),
     headers: { 'Content-Type': 'application/json' },
   })
-  return res.json() as Promise<Exchange>
+  return handleResponse<Exchange>(res)
 }
 
 export async function getExchangeById(id: string): Promise<Exchange> {
   const res = await fetch(`${BASE_URL}/${id}`)
-  return res.json() as Promise<Exchange>
+  return handleResponse<Exchange>(res)
 }
 
 export async function updateExchange(id: string, data: Partial<Exchange>): Promise<Exchange> {
@@ -45,17 +46,17 @@ export async function updateExchange(id: string, data: Partial<Exchange>): Promi
     body: JSON.stringify(data),
     headers: { 'Content-Type': 'application/json' },
   })
-  return res.json() as Promise<Exchange>
+  return handleResponse<Exchange>(res)
 }
 
 export async function deleteExchange(id: string): Promise<DeleteExchangeResponse> {
   const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' })
-  return res.json() as Promise<DeleteExchangeResponse>
+  return handleResponse<DeleteExchangeResponse>(res)
 }
 
 export async function getAssignments(exchangeId: string): Promise<AssignmentWithUsers[]> {
   const res = await fetch(`${BASE_URL}/${exchangeId}/assignments`)
-  return res.json() as Promise<AssignmentWithUsers[]>
+  return handleResponse<AssignmentWithUsers[]>(res)
 }
 
 export async function getReceiverForUser(
@@ -63,17 +64,17 @@ export async function getReceiverForUser(
   userId: string,
 ): Promise<AssignmentReceiver> {
   const res = await fetch(`${BASE_URL}/${exchangeId}/assignments/${userId}`)
-  return res.json() as Promise<AssignmentReceiver>
+  return handleResponse<AssignmentReceiver>(res)
 }
 
 export async function generateMatches(exchangeId: string): Promise<CreatedAssignmentsResponse> {
   const res = await fetch(`${BASE_URL}/${exchangeId}/generate-matches`, { method: 'POST' })
-  return res.json() as Promise<CreatedAssignmentsResponse>
+  return handleResponse<CreatedAssignmentsResponse>(res)
 }
 
 export async function getMembers(exchangeId: string): Promise<MemberWithUser[]> {
   const res = await fetch(`${BASE_URL}/${exchangeId}/members`)
-  return res.json() as Promise<MemberWithUser[]>
+  return handleResponse<MemberWithUser[]>(res)
 }
 
 export async function addMembers(
@@ -85,7 +86,7 @@ export async function addMembers(
     body: JSON.stringify({ userIds }),
     headers: { 'Content-Type': 'application/json' },
   })
-  return res.json() as Promise<AddedMembersResponse>
+  return handleResponse<AddedMembersResponse>(res)
 }
 
 export async function removeMember(
@@ -93,5 +94,5 @@ export async function removeMember(
   userId: string,
 ): Promise<RemovedMemberResponse> {
   const res = await fetch(`${BASE_URL}/${exchangeId}/members/${userId}`, { method: 'DELETE' })
-  return res.json() as Promise<RemovedMemberResponse>
+  return handleResponse<RemovedMemberResponse>(res)
 }

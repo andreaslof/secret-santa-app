@@ -31,32 +31,33 @@ export default function ExchangeMembers({ exchangeId, initialMembers }: Props) {
   }
 
   return (
-    <div className="w-full mt-6">
+    <div className="w-full mt-6" data-testid="exchange-members">
       <h2 className="text-lg font-medium mb-2">Members</h2>
-      <ul className="mb-4">
+      <ul className="mb-4" data-testid="members-list">
         {members.map(({ userId, user }) => (
           <li key={userId} className="flex justify-between items-center py-1">
-            <span>
-              {user?.name || userId} ({user.email})
+            <span data-testid="added-member">
+              {user?.name || userId} ({user.email} - {user.id})
             </span>
             <button
               onClick={() => handleRemove(userId)}
               className="text-red-600 text-sm cursor-pointer"
+              data-testid="remove-member-btn"
             >
               Remove
             </button>
           </li>
         ))}
       </ul>
-      <select className="border p-2 mr-2" onChange={(e) => handleAdd(e.target.value)} value="">
+      <select className="border p-2 mr-2" onChange={(e) => handleAdd(e.target.value)} data-testid="available-members">
         <option value="" disabled>
           Add member...
         </option>
         {allUsers
           .filter((u) => !members.some((m) => m.userId === u.id))
           .map((user) => (
-            <option key={user.id} value={user.id}>
-              {user.name} ({user.email})
+            <option key={user.id} value={user.id} data-testid="available-member">
+              {user.name} ({user.email} - {user.id})
             </option>
           ))}
       </select>

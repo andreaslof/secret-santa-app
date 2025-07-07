@@ -1,18 +1,17 @@
 import { User, WishlistItem } from '@/app/generated/prisma'
 import { getBaseUrl } from './config'
+import { handleResponse } from './api-helpers'
 
 const BASE_URL = `${getBaseUrl()}/api/users`
 
 export async function getAllUsers(): Promise<User[]> {
   const res = await fetch(BASE_URL)
-  if (!res.ok) throw new Error('Failed to fetch users')
-  return res.json()
+  return handleResponse<User[]>(res)
 }
 
 export async function getUserById(id: string): Promise<User> {
   const res = await fetch(`${BASE_URL}/${id}`)
-  if (!res.ok) throw new Error(`Failed to fetch user with ID ${id}`)
-  return res.json()
+  return handleResponse<User>(res)
 }
 
 export async function createUser(data: Pick<User, 'name' | 'email'>): Promise<User> {
@@ -21,8 +20,7 @@ export async function createUser(data: Pick<User, 'name' | 'email'>): Promise<Us
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  if (!res.ok) throw new Error('Failed to create user')
-  return res.json()
+  return handleResponse<User>(res)
 }
 
 export async function updateUser(
@@ -34,22 +32,19 @@ export async function updateUser(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  if (!res.ok) throw new Error(`Failed to update user with ID ${id}`)
-  return res.json()
+  return handleResponse<User>(res)
 }
 
 export async function deleteUser(id: string): Promise<User> {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: 'DELETE',
   })
-  if (!res.ok) throw new Error(`Failed to delete user with ID ${id}`)
-  return res.json()
+  return handleResponse<User>(res)
 }
 
 export async function getWishlist(userId: string): Promise<WishlistItem[]> {
   const res = await fetch(`${BASE_URL}/${userId}/wishlist`)
-  if (!res.ok) throw new Error(`Failed to fetch wishlist for user ID ${userId}`)
-  return res.json()
+  return handleResponse<WishlistItem[]>(res)
 }
 
 export async function addWishlistItem(userId: string, label: string): Promise<WishlistItem> {
@@ -58,14 +53,12 @@ export async function addWishlistItem(userId: string, label: string): Promise<Wi
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ label }),
   })
-  if (!res.ok) throw new Error(`Failed to add wishlist item for user ID ${userId}`)
-  return res.json()
+  return handleResponse<WishlistItem>(res)
 }
 
 export async function removeWishlistItem(id: string): Promise<WishlistItem> {
   const res = await fetch(`${BASE_URL}/wishlist/${id}`, {
     method: 'DELETE',
   })
-  if (!res.ok) throw new Error(`Failed to remove wishlist item with ID ${id}`)
-  return res.json()
+  return handleResponse<WishlistItem>(res)
 }
