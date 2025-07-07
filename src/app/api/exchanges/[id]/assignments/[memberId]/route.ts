@@ -4,16 +4,24 @@ import prisma from '@/lib/prisma'
 
 export async function GET(
   _: NextRequest,
-  { params }: { params: Promise<{ id: string; userId: string }> },
+  { params }: { params: Promise<{ id: string; memberId: string }> },
 ) {
-  const { id, userId } = await params
+  const { id, memberId } = await params
   const assignment = await prisma.assignment.findFirst({
     where: {
       exchangeId: id,
-      giverId: userId,
+      AND: [
+        {
+          OR: [
+            { giverId: memberId },
+            { receiverId: memberId },
+          ]
+        }
+      ]
     },
     include: {
       receiver: true,
+      giver: true,
     },
   })
 

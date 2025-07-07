@@ -5,7 +5,7 @@ type AssignmentWithUsers = Prisma.AssignmentGetPayload<{
   include: { giver: true; receiver: true }
 }>
 
-type AssignmentReceiver = Prisma.AssignmentGetPayload<{
+export type AssignmentReceiver = Prisma.AssignmentGetPayload<{
   include: { receiver: true }
 }>['receiver']
 

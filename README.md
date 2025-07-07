@@ -2,35 +2,165 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Docker
+- pnpm
+
+It is also recommended that you put the following on your `$PATH` variable for your shell:
+```shell
+export PATH="node_modules/.bin:$PATH"
 ```
+This allows your shell to pick up any executable binaries in the local `node_modules` folder.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# Database Structure and Design
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This document provides an overview of the database schema for the Secret Santa application. It outlines the relationships between models and the structure of the data stored in the database.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Models Overview
 
-## Learn More
+The following models are defined in the Prisma schema:
 
-To learn more about Next.js, take a look at the following resources:
+1. **User**
+2. **Exchange**
+3. **Member**
+4. **Assignment**
+5. **WishlistItem**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## **User Table**
+| Field      | Type      | Description |
+|------------|-----------|-------------|
+| `id`       | `String`  | Primary key, UUID (unique) |
+| `email`    | `String`  | Unique email address of the user |
+| `name`     | `String`  | The name of the user |
+| `createdAt`| `DateTime`| Timestamp when the user was created |
 
-## Deploy on Vercel
+### Relationships:
+- **Members**: A user can belong to multiple exchanges through the `Member` model.
+- **WishlistItems**: A user can have multiple wishlist items.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## **Exchange Table**
+| Field       | Type      | Description |
+|-------------|-----------|-------------|
+| `id`        | `String`  | Primary key, UUID (unique) |
+| `name`      | `String`  | Name of the exchange |
+| `createdAt` | `DateTime`| Timestamp when the exchange was created |
+
+### Relationships:
+- **Members**: An exchange contains multiple members, linked through the `Member` model.
+- **Assignments**: An exchange has multiple assignments, linked to the `Assignment` model.
+
+---
+
+## **Member Table**
+| Field       | Type      | Description |
+|-------------|-----------|-------------|
+| `id`        | `String`  | Primary key, UUID (unique) |
+| `userId`    | `String`  | Foreign key linking to the `User` model |
+| `exchangeId`| `String`  | Foreign key linking to the `Exchange` model |
+| `createdAt` | `DateTime`| Timestamp when the member was created |
+
+### Relationships:
+- **User**: A member is associated with a user through the `userId`.
+- **Exchange**: A member is associated with an exchange through the `exchangeId`.
+- **Assignments**: A member may be assigned as a giver or receiver in the `Assignment` model.
+
+---
+
+## **Assignment Table**
+| Field                 | Type      | Description |
+|-----------------------|-----------|-------------|
+| `id`                  | `String`  | Primary key, UUID (unique) |
+| `exchangeId`          | `String`  | Foreign key linking to the `Exchange` model |
+| `giverId`             | `String`  | Foreign key linking to the `Member` model, the giver |
+| `receiverId`          | `String`  | Foreign key linking to the `Member` model, the receiver |
+| `selectedWishlistItemId` | `String`| Foreign key linking to the `WishlistItem` model (optional) |
+| `customGiftTitle`     | `String?` | Optional custom gift title |
+| `customGiftUrl`       | `String?` | Optional custom gift URL |
+| `giftGivenAt`         | `DateTime?`| Timestamp when the gift was given |
+| `createdAt`           | `DateTime`| Timestamp when the assignment was created |
+
+### Relationships:
+- **Exchange**: Each assignment is linked to a specific exchange.
+- **Giver and Receiver**: The `giver` and `receiver` are linked to the `Member` model, with `giverId` and `receiverId` as foreign keys.
+- **WishlistItem**: The `selectedWishlistItem` is an optional link to the `WishlistItem` model.
+
+---
+
+## **WishlistItem Table**
+| Field         | Type      | Description |
+|---------------|-----------|-------------|
+| `id`          | `String`  | Primary key, UUID (unique) |
+| `userId`      | `String`  | Foreign key linking to the `User` model |
+| `title`       | `String`  | Title of the wishlist item |
+| `description` | `String?` | Optional description of the wishlist item |
+| `url`         | `String?` | Optional URL associated with the wishlist item |
+| `createdAt`   | `DateTime`| Timestamp when the wishlist item was created |
+
+### Relationships:
+- **User**: Each wishlist item is associated with a specific user.
+- **Assignments**: A wishlist item can be selected for an assignment as the chosen gift.
+
+---
+
+## Relationships Summary
+
+- **User ↔ Member**: A user can have many members through different exchanges.
+- **Exchange ↔ Member**: An exchange can have many members.
+- **Member ↔ Assignment**: A member can be a giver or receiver in one or more assignments.
+- **Assignment ↔ WishlistItem**: Each assignment can be linked to a wishlist item, representing the gift chosen.
+
+---
+
+## Diagram
+
+```mermaid
+erDiagram
+    USER {
+        String id PK
+        String email
+        String name
+        DateTime createdAt
+    }
+    EXCHANGE {
+        String id PK
+        String name
+        DateTime createdAt
+    }
+    MEMBER {
+        String id PK
+        String userId FK
+        String exchangeId FK
+        DateTime createdAt
+    }
+    ASSIGNMENT {
+        String id PK
+        String exchangeId FK
+        String giverId FK
+        String receiverId FK
+        String selectedWishlistItemId FK
+        String customGiftTitle
+        String customGiftUrl
+        DateTime giftGivenAt
+        DateTime createdAt
+    }
+    WISHLISTITEM {
+        String id PK
+        String userId FK
+        String title
+        String description
+        String url
+        DateTime createdAt
+    }
+
+    USER ||--o{ MEMBER : has
+    EXCHANGE ||--o{ MEMBER : has
+    MEMBER ||--o{ ASSIGNMENT : gives
+    MEMBER ||--o{ ASSIGNMENT : receives
+    ASSIGNMENT ||--o{ WISHLISTITEM : selects
+    USER ||--o{ WISHLISTITEM : has
+```

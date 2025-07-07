@@ -1,7 +1,10 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
-export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string, userId: string }> }) {
+export async function DELETE(
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string; userId: string }> },
+) {
   const { id, userId } = await params
 
   if (!userId) {
@@ -13,8 +16,8 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
       userId_exchangeId: {
         userId,
         exchangeId: id,
-      }
-    }
+      },
+    },
   })
   return NextResponse.json({ deleted: true })
 }

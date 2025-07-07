@@ -44,7 +44,10 @@ export default function CreateUserPage() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <button type="submit" className="p-2 px-4 border rounded-md bg-black hover:bg-blue-600 text-sm uppercase font-bold text-white no-underline cursor-pointer">
+        <button
+          type="submit"
+          className="p-2 px-4 border rounded-md bg-black hover:bg-blue-600 text-sm uppercase font-bold text-white no-underline cursor-pointer"
+        >
           Create
         </button>
       </form>
