@@ -2,8 +2,15 @@ import { Exchange, Prisma } from '@/app/generated/prisma'
 import { getBaseUrl } from './config'
 import { handleResponse } from './api-helpers'
 
-type AssignmentWithUsers = Prisma.AssignmentGetPayload<{
-  include: { giver: true; receiver: true }
+export type AssignmentWithUsers = Prisma.AssignmentGetPayload<{
+  include: {
+    giver: {
+      include: { user: true },
+    },
+    receiver: {
+      include: { user: true },
+    },
+  },
 }>
 
 export type AssignmentReceiver = Prisma.AssignmentGetPayload<{

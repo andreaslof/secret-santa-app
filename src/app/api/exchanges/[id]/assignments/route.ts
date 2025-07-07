@@ -6,7 +6,14 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   const { id } = await params
   const assignments = await prisma.assignment.findMany({
     where: { exchangeId: id },
-    include: { giver: true, receiver: true },
+    include: {
+      giver: {
+        include: { user: true },
+      },
+      receiver: {
+        include: { user: true },
+      },
+    },
   })
   return NextResponse.json(assignments)
 }

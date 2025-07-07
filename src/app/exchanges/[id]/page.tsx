@@ -1,7 +1,9 @@
-import ExchangeMembers from '@/components/exchanges/ExchangeMembers'
-import { getExchangeById, getMembers } from '@/lib/exchanges'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+
+import ExchangeMembersAssignmentsContainer from '@/components/exchanges/ExchangeMembersAssignmentsContainer'
+import { getAssignments, getExchangeById, getMembers } from '@/lib/exchanges'
+import { getAllUsers } from '@/lib/users'
 
 async function fetchExchange(id: string) {
   try {
@@ -20,8 +22,9 @@ export default async function ExchangeDetailPage({ params }: { params: Promise<{
     notFound()
   }
 
+  const users = await getAllUsers()
   const members = await getMembers(id)
-  console.log(members)
+  const assignments = await getAssignments(id)
 
   return (
     <main className="md:min-w-[600px] flex flex-col items-center sm:items-start" role="main">
@@ -39,7 +42,12 @@ export default async function ExchangeDetailPage({ params }: { params: Promise<{
           <strong>Created At:</strong> {new Date(exchange.createdAt).toLocaleString()}
         </p>
       </div>
-      <ExchangeMembers exchangeId={id} initialMembers={members} />
+      <ExchangeMembersAssignmentsContainer
+        exchangeId={id}
+        initialAssignments={assignments}
+        initialMembers={members}
+        allUsers={users}
+      />
     </main>
   )
 }
