@@ -49,7 +49,11 @@ export default function ExchangeMembers({ exchangeId, initialMembers }: Props) {
           </li>
         ))}
       </ul>
-      <select className="border p-2 mr-2" onChange={(e) => handleAdd(e.target.value)} data-testid="available-members">
+      <select
+        className="border p-2 mr-2"
+        onChange={(e) => handleAdd(e.target.value)}
+        data-testid="available-members"
+      >
         <option value="" disabled>
           Add member...
         </option>

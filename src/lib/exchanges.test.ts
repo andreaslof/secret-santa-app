@@ -29,7 +29,10 @@ describe('lib/exchanges.ts', () => {
 
   it('createExchange posts and returns exchange', async () => {
     const data = { name: 'New Exchange' }
-    fetchMock.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ id: 'ex2', ...data }) })
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ id: 'ex2', ...data }),
+    })
     const result = await createExchange(data)
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining('/api/exchanges'),
@@ -49,7 +52,10 @@ describe('lib/exchanges.ts', () => {
   })
 
   it('updateExchange patches and returns updated exchange', async () => {
-    fetchMock.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ id: 'ex4', name: 'Updated' }) })
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ id: 'ex4', name: 'Updated' }),
+    })
     const result = await updateExchange('ex4', { name: 'Updated' })
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining('/api/exchanges/ex4'),
@@ -70,7 +76,8 @@ describe('lib/exchanges.ts', () => {
 
   it('getAssignments returns assignments with users', async () => {
     fetchMock.mockResolvedValueOnce({
-      ok: true, json: () => Promise.resolve([{ id: 'a1', giver: {}, receiver: {} }]),
+      ok: true,
+      json: () => Promise.resolve([{ id: 'a1', giver: {}, receiver: {} }]),
     })
     const result = await getAssignments('ex1')
     expect(result[0]).toHaveProperty('giver')
@@ -91,7 +98,8 @@ describe('lib/exchanges.ts', () => {
 
   it('getMembers returns members with user info', async () => {
     fetchMock.mockResolvedValueOnce({
-      ok: true, json: () => Promise.resolve([{ id: 'm1', user: { id: 'u1' } }]),
+      ok: true,
+      json: () => Promise.resolve([{ id: 'm1', user: { id: 'u1' } }]),
     })
     const result = await getMembers('ex1')
     expect(result[0]).toHaveProperty('user')

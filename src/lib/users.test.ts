@@ -53,7 +53,7 @@ describe('lib/users.ts', () => {
         method: 'POST',
         body: expect.any(String),
         headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
-      })
+      }),
     )
   })
 
