@@ -15,7 +15,7 @@ export default async function Home() {
   return (
     <main className="md:min-w-[600px] flex flex-col" role="main">
       <header className="w-full flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold">Secret Santa App Admin</h1>
+        <h1 className="text-2xl font-semibold">Secret Santa App Admin 🎅</h1>
       </header>
       <ul className="list-none list-inside" data-test-id="app-nav">
         {navRoutes.map((route) => (

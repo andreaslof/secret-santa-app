@@ -7,7 +7,8 @@ A simple secret santa gift exchange application, using Next.js 15, Postgres w Pr
 ### :warning: Prerequisites
 
 - Docker
-- pnpm
+- `node@22` + `corepack`
+- `pnpm`
 
 It is also recommended that you put the following on your `$PATH` variable for your shell:
 
